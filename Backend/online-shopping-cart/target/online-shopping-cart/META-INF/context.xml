@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Configures the JSESSIONID cookie so it survives cross-origin requests
+  from the frontend (VS Code Live Server on a different port).
+
+  sameSiteCookies="None" tells the browser to send the cookie even when
+  the request originates from a different origin. On plain HTTP + localhost
+  most browsers still allow this as a development exception, but if you
+  run into "logged in but next request says unauthorized," this is the
+  first thing to check.
+-->
+<Context sameSiteCookies="None">
+</Context>

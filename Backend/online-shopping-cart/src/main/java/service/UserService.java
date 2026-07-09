@@ -1,0 +1,55 @@
+package service;
+
+import dao.UserDAO;
+import model.User;
+import util.PasswordUtil;
+
+public class UserService {
+
+	private final UserDAO userdao = new UserDAO();
+
+	// for user registration
+	public boolean register(User user) {
+
+		// for checking user is alredy exust or not
+		if (userdao.existsByEmail(user.getEmail())) {
+			return false;
+		}
+
+		// for password encryption
+		String hashedPassword = PasswordUtil.hashPassword(user.getPassword());
+		user.setPassword(hashedPassword);
+
+		// return the user for register
+
+		return userdao.register(user);
+
+	}
+
+	public User login(String email, String password) {
+
+		User user = userdao.login(email);
+
+		if (user == null)
+			return null;
+
+		boolean isValid = PasswordUtil.checkPassword(password, user.getPassword());
+
+		if (!isValid)
+			return null;
+		// client la hashpassword patahvu naye mhanun
+		user.setPassword(null);
+
+		return user;
+
+	}
+
+	public java.util.List<User> listAllUsers() {
+		return userdao.findAll();
+	}
+
+	public boolean updateUserStatus(Long id, String status) {
+		return userdao.updateStatus(id, status);
+	}
+
+}
