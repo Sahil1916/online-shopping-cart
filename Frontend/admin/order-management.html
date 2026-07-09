@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Management — ShopVerse Admin</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="page-loader"><div class="loader-ring"></div></div>
+<div id="admin-sidebar-placeholder" data-active="orders"></div>
+
+<main class="admin-main">
+  <div id="admin-topbar-placeholder" data-title="Order Management" data-subtitle="Track and update customer orders."></div>
+
+  <div class="admin-card reveal">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <h6 class="fw-bold mb-0">All Orders (<span id="orderCount">0</span>)</h6>
+      <div class="d-flex gap-2 flex-wrap">
+        <select class="form-select form-select-sm w-auto" id="statusFilter" onchange="renderOrders()">
+          <option value="">All Status</option>
+          <option value="PENDING">Pending</option>
+          <option value="CONFIRMED">Confirmed</option>
+          <option value="SHIPPED">Shipped</option>
+          <option value="DELIVERED">Delivered</option>
+          <option value="CANCELLED">Cancelled</option>
+        </select>
+        <input type="text" class="form-control form-control-sm w-auto" placeholder="Search order/customer..." id="orderSearch" oninput="renderOrders()">
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-admin mb-0">
+        <thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Payment</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+        <tbody id="orderTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<div class="modal fade" id="orderModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:18px;">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">Order Details</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="orderModalBody"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../data/data.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/admin-partials.js"></script>
+<script>
+let orders = [];
+let users = [];
+const STATUS_OPTS = ['PENDING','CONFIRMED','SHIPPED','DELIVERED','CANCELLED'];
+const statusBadgeClass = s => ({DELIVERED:'badge-delivered', SHIPPED:'badge-shipped', CONFIRMED:'badge-shipped', PENDING:'badge-processing', CANCELLED:'badge-pending'}[s] || 'badge-processing');
+
+async function loadOrders(){
+  try { orders = (await api.getAllOrdersAdmin()) || []; } catch { orders = []; }
+  try { users = (await api.getAllUsersAdmin()) || []; } catch { users = []; }
+  renderOrders();
+}
+
+function userNameById(id){ return users.find(u => u.id === id)?.name || 'User #' + id; }
+
+function renderOrders(){
+  const q = document.getElementById('orderSearch').value.toLowerCase();
+  const statusF = document.getElementById('statusFilter').value;
+  const list = orders.filter(o =>
+    (String(o.id).includes(q) || userNameById(o.userId).toLowerCase().includes(q)) &&
+    (!statusF || o.status === statusF)
+  );
+  document.getElementById('orderCount').textContent = orders.length;
+  document.getElementById('orderTableBody').innerHTML = list.length ? list.map(o => `
+    <tr>
+      <td class="fw-semibold">#${o.id}</td>
+      <td>${userNameById(o.userId)}</td>
+      <td>₹${Number(o.totalAmount).toLocaleString('en-IN')}</td>
+      <td class="small">${o.paymentMethod || '—'}</td>
+      <td>
+        <select class="form-select form-select-sm" style="font-size:.78rem;" onchange="updateStatus(${o.id}, this.value)">
+          ${STATUS_OPTS.map(s => `<option value="${s}" ${s===o.status?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td class="small">${o.orderDate ? new Date(o.orderDate).toLocaleDateString('en-IN') : '—'}</td>
+      <td><button class="btn btn-sm btn-light-soft" onclick='viewOrder(${JSON.stringify(o).replace(/'/g,"&apos;")})'><i class="bi bi-eye"></i></button></td>
+    </tr>`).join('') : '<tr><td colspan="7" class="text-center text-muted py-3">No orders found.</td></tr>';
+}
+
+async function updateStatus(id, status){
+  try {
+    await api.updateOrderStatus(id, status);
+    const o = orders.find(x => x.id === id);
+    if (o) o.status = status;
+    showToast(`Order #${id} marked as ${status}`);
+    renderOrders();
+  } catch {}
+}
+
+function viewOrder(o){
+  document.getElementById('orderModalBody').innerHTML = `
+    <div class="d-flex justify-content-between mb-3">
+      <h6 class="mb-0">Order #${o.id}</h6>
+      <span class="badge-status ${statusBadgeClass(o.status)}">${o.status}</span>
+    </div>
+    <div class="row small g-2">
+      <div class="col-5"><strong>Customer:</strong></div><div class="col-7">${userNameById(o.userId)}</div>
+      <div class="col-5"><strong>Amount:</strong></div><div class="col-7">₹${Number(o.totalAmount).toLocaleString('en-IN')}</div>
+      <div class="col-5"><strong>Payment:</strong></div><div class="col-7">${o.paymentMethod || '—'}</div>
+      <div class="col-5"><strong>Shipping:</strong></div><div class="col-7">${o.shippingAddress || '—'}</div>
+      <div class="col-5"><strong>Date:</strong></div><div class="col-7">${o.orderDate ? new Date(o.orderDate).toLocaleDateString('en-IN') : '—'}</div>
+    </div>`;
+  new bootstrap.Modal(document.getElementById('orderModal')).show();
+}
+
+loadOrders();
+initReveal();
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — ShopVerse</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="page-loader"><div class="loader-ring"></div></div>
+<div id="admin-sidebar-placeholder" data-active="dash"></div>
+
+<main class="admin-main">
+  <div id="admin-topbar-placeholder" data-title="Dashboard" data-subtitle="Welcome back, here's what's happening today."></div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-md-6 col-xl-3">
+      <div class="stat-card reveal">
+        <div class="stat-icon" style="background:var(--violet);"><i class="bi bi-box-seam-fill"></i></div>
+        <div class="stat-num" id="statProducts">0</div>
+        <div class="stat-label">Total Products</div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="stat-card reveal">
+        <div class="stat-icon" style="background:var(--coral);"><i class="bi bi-people-fill"></i></div>
+        <div class="stat-num" id="statUsers">0</div>
+        <div class="stat-label">Total Users</div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="stat-card reveal">
+        <div class="stat-icon" style="background:var(--success);"><i class="bi bi-receipt-cutoff"></i></div>
+        <div class="stat-num" id="statOrders">0</div>
+        <div class="stat-label">Total Orders</div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+      <div class="stat-card reveal">
+        <div class="stat-icon" style="background:var(--warn);"><i class="bi bi-currency-rupee"></i></div>
+        <div class="stat-num" id="statRevenue">0</div>
+        <div class="stat-label">Total Revenue (₹)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-lg-8">
+      <div class="admin-card reveal h-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold mb-0">Revenue Overview</h6>
+          <select class="form-select form-select-sm w-auto"><option>Last 7 Days</option><option>Last 30 Days</option><option>This Year</option></select>
+        </div>
+        <canvas id="revenueChart" height="120"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="admin-card reveal h-100">
+        <h6 class="fw-bold mb-3">Orders by Category</h6>
+        <canvas id="categoryChart" height="180"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-card reveal">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h6 class="fw-bold mb-0">Recent Orders</h6>
+      <a href="order-management.html" class="small text-violet fw-semibold">View All <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-admin mb-0">
+        <thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Payment</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody id="recentOrdersBody"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="../data/data.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/admin-partials.js"></script>
+<script>
+function animateCounter(el, target){
+  let cur = 0;
+  const step = Math.max(1, Math.ceil(target / 60));
+  const t = setInterval(() => {
+    cur += step;
+    if (cur >= target){ cur = target; clearInterval(t); }
+    el.textContent = cur.toLocaleString('en-IN');
+  }, 20);
+}
+
+const statusBadgeClass = s => ({DELIVERED:'badge-delivered', SHIPPED:'badge-shipped', PENDING:'badge-processing', CONFIRMED:'badge-shipped', CANCELLED:'badge-pending'}[s] || 'badge-processing');
+
+async function loadDashboard(){
+  let products = [], users = [], orders = [];
+  try { products = (await api.getProducts()) || []; } catch {}
+  try { users = (await api.getAllUsersAdmin()) || []; } catch {}
+  try { orders = (await api.getAllOrdersAdmin()) || []; } catch {}
+
+  const userById = Object.fromEntries(users.map(u => [u.id, u]));
+  const revenue = orders.reduce((s,o) => s + Number(o.totalAmount || 0), 0);
+
+  animateCounter(document.getElementById('statProducts'), products.length);
+  animateCounter(document.getElementById('statUsers'), users.length);
+  animateCounter(document.getElementById('statOrders'), orders.length);
+  animateCounter(document.getElementById('statRevenue'), Math.round(revenue));
+
+  // Recent orders (most recent 5 by id)
+  const recent = [...orders].sort((a,b) => b.id - a.id).slice(0, 5);
+  document.getElementById('recentOrdersBody').innerHTML = recent.length ? recent.map(o => `
+    <tr>
+      <td class="fw-semibold">#${o.id}</td>
+      <td>${userById[o.userId]?.name || 'User #' + o.userId}</td>
+      <td>₹${Number(o.totalAmount).toLocaleString('en-IN')}</td>
+      <td><span class="badge-status badge-paid">${o.paymentMethod || '—'}</span></td>
+      <td><span class="badge-status ${statusBadgeClass(o.status)}">${o.status}</span></td>
+      <td>${o.orderDate ? new Date(o.orderDate).toLocaleDateString('en-IN') : '—'}</td>
+    </tr>`).join('') : '<tr><td colspan="6" class="text-center text-muted py-3">No orders yet.</td></tr>';
+
+  // Revenue by day (derived from order dates actually in the data)
+  const byDay = {};
+  orders.forEach(o => {
+    const d = o.orderDate ? new Date(o.orderDate).toLocaleDateString('en-IN', { weekday: 'short' }) : 'Unknown';
+    byDay[d] = (byDay[d] || 0) + Number(o.totalAmount || 0);
+  });
+  const dayLabels = Object.keys(byDay).length ? Object.keys(byDay) : ['No data'];
+  const dayValues = Object.keys(byDay).length ? Object.values(byDay) : [0];
+
+  new Chart(document.getElementById('revenueChart'), {
+    type: 'line',
+    data: { labels: dayLabels, datasets: [{ label: 'Revenue (₹)', data: dayValues, borderColor: '#C9A24B', backgroundColor: 'rgba(201,162,75,0.12)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#C9A24B' }] },
+    options: { plugins:{legend:{display:false}}, scales:{y:{grid:{color:'#F8F7F5'}}, x:{grid:{display:false}}} }
+  });
+
+  // Products by category (proxy for "orders by category" since order items aren't joined to category here)
+  const catCounts = {};
+  products.forEach(p => { catCounts[p.category] = (catCounts[p.category] || 0) + 1; });
+  new Chart(document.getElementById('categoryChart'), {
+    type: 'doughnut',
+    data: { labels: Object.keys(catCounts), datasets: [{ data: Object.values(catCounts), backgroundColor: ['#0B0B0C','#C9A24B','#9C7A2E','#85807A'], borderWidth: 0 }] },
+    options: { plugins:{legend:{position:'bottom'}}, cutout:'65%' }
+  });
+
+  initReveal();
+}
+
+loadDashboard();
+</script>
+</body>
+</html>

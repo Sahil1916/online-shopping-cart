@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Management — ShopVerse Admin</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="page-loader"><div class="loader-ring"></div></div>
+<div id="admin-sidebar-placeholder" data-active="products"></div>
+
+<main class="admin-main">
+  <div id="admin-topbar-placeholder" data-title="Product Management" data-subtitle="Add, edit and manage your product catalog."></div>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="admin-card reveal">
+        <h6 class="fw-bold mb-3" id="formTitle"><i class="bi bi-plus-circle me-1 text-violet"></i> Add New Product</h6>
+        <form id="productForm">
+          <input type="hidden" id="editId">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Product Image URL</label>
+            <input type="url" class="form-control" id="pImgUrl" placeholder="https://example.com/image.jpg" oninput="previewFromUrl(this.value)">
+            <div class="mt-2">
+              <img id="imgPreview" style="display:none;max-width:100%;border-radius:10px;max-height:120px;object-fit:cover;">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Product Name</label>
+            <input type="text" class="form-control" id="pName" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Description</label>
+            <textarea class="form-control" id="pDesc" rows="2" required></textarea>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label small fw-semibold">Category</label>
+              <select class="form-select" id="pCategory" required>
+                <option value="Electronics">Electronics</option>
+                <option value="Fashion">Fashion</option>
+                <option value="Home">Home</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label small fw-semibold">Price (₹)</label>
+              <input type="number" class="form-control" id="pPrice" min="1" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">MRP / Original Price (₹)</label>
+            <input type="number" class="form-control" id="pMrp" min="1">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Quantity Available</label>
+            <input type="number" class="form-control" id="pQty" min="0" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100" id="submitBtn"><i class="bi bi-plus-lg me-1"></i> Add Product</button>
+          <button type="button" class="btn btn-light-soft w-100 mt-2 d-none" id="cancelEditBtn" onclick="resetForm()">Cancel Edit</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="admin-card reveal">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+          <h6 class="fw-bold mb-0">All Products (<span id="prodCount">0</span>)</h6>
+          <input type="text" class="form-control w-auto" placeholder="Search products..." id="prodSearch" oninput="renderTable()">
+        </div>
+        <div class="table-responsive">
+          <table class="table table-admin mb-0">
+            <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Qty</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="productTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Delete confirm modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:18px;">
+      <div class="modal-body text-center py-4">
+        <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size:2.5rem;"></i>
+        <h5 class="mt-3">Delete this product?</h5>
+        <p class="text-muted small">This action cannot be undone.</p>
+        <div class="d-flex gap-2 justify-content-center mt-3">
+          <button class="btn btn-light-soft" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-coral" id="confirmDeleteBtn">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../data/data.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/admin-partials.js"></script>
+<script>
+let products = [];
+let deleteTargetId = null;
+const placeholderImg = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&q=80';
+
+function previewFromUrl(url){
+  const img = document.getElementById('imgPreview');
+  if (url){ img.src = url; img.style.display = 'block'; img.onerror = () => img.style.display = 'none'; }
+  else img.style.display = 'none';
+}
+
+async function loadProducts(){
+  try { products = (await api.getProducts()) || []; }
+  catch { products = []; }
+  renderTable();
+}
+
+function renderTable(){
+  const q = document.getElementById('prodSearch').value.toLowerCase();
+  const list = products.filter(p => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+  document.getElementById('prodCount').textContent = products.length;
+  document.getElementById('productTableBody').innerHTML = list.length ? list.map(p => `
+    <tr>
+      <td><div class="d-flex align-items-center gap-2"><img src="${p.imageUrl || placeholderImg}" style="width:46px;height:46px;border-radius:8px;object-fit:cover;"><span class="fw-semibold small">${p.name}</span></div></td>
+      <td><span class="badge-status badge-shipped">${p.category}</span></td>
+      <td>₹${Number(p.price).toLocaleString('en-IN')}</td>
+      <td>${p.quantity}</td>
+      <td>${p.quantity > 0 ? '<span class="badge-status badge-active">In Stock</span>' : '<span class="badge-status badge-blocked">Out of Stock</span>'}</td>
+      <td>
+        <button class="btn btn-sm btn-light-soft me-1" onclick='editProduct(${JSON.stringify(p).replace(/'/g,"&apos;")})'><i class="bi bi-pencil"></i></button>
+        <button class="btn btn-sm btn-light-soft text-danger" onclick="openDelete(${p.id})"><i class="bi bi-trash3"></i></button>
+      </td>
+    </tr>`).join('') : '<tr><td colspan="6" class="text-center text-muted py-3">No products found.</td></tr>';
+}
+
+function editProduct(p){
+  document.getElementById('editId').value = p.id;
+  document.getElementById('pName').value = p.name;
+  document.getElementById('pDesc').value = p.description || '';
+  document.getElementById('pCategory').value = p.category;
+  document.getElementById('pPrice').value = p.price;
+  document.getElementById('pMrp').value = p.mrp || '';
+  document.getElementById('pQty').value = p.quantity;
+  const img = document.getElementById('imgPreview');
+  if (p.imageUrl){ img.src = p.imageUrl; img.style.display = 'block'; } else { img.style.display = 'none'; }
+  document.getElementById('pImgUrl').value = p.imageUrl || '';
+  document.getElementById('formTitle').innerHTML = '<i class="bi bi-pencil-square me-1 text-violet"></i> Edit Product';
+  document.getElementById('submitBtn').innerHTML = '<i class="bi bi-check-lg me-1"></i> Update Product';
+  document.getElementById('cancelEditBtn').classList.remove('d-none');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function resetForm(){
+  document.getElementById('productForm').reset();
+  document.getElementById('editId').value = '';
+  document.getElementById('imgPreview').style.display = 'none';
+  document.getElementById('formTitle').innerHTML = '<i class="bi bi-plus-circle me-1 text-violet"></i> Add New Product';
+  document.getElementById('submitBtn').innerHTML = '<i class="bi bi-plus-lg me-1"></i> Add Product';
+  document.getElementById('cancelEditBtn').classList.add('d-none');
+}
+
+function openDelete(id){
+  deleteTargetId = id;
+  new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+  try {
+    await api.deleteProduct(deleteTargetId);
+    showToast('Product deleted successfully');
+    bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+    await loadProducts();
+  } catch {
+    bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+  }
+});
+
+document.getElementById('productForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const editId = document.getElementById('editId').value;
+  const imgUrl = document.getElementById('pImgUrl').value || document.getElementById('imgPreview').src || placeholderImg;
+
+  const payload = {
+    name: document.getElementById('pName').value,
+    description: document.getElementById('pDesc').value,
+    category: document.getElementById('pCategory').value,
+    price: +document.getElementById('pPrice').value,
+    mrp: document.getElementById('pMrp').value ? +document.getElementById('pMrp').value : null,
+    quantity: +document.getElementById('pQty').value,
+    imageUrl: imgUrl.startsWith('data:') ? placeholderImg : imgUrl
+  };
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  try {
+    if (editId){
+      await api.updateProduct({ ...payload, id: +editId });
+      showToast('Product updated successfully');
+    } else {
+      await api.addProduct(payload);
+      showToast('Product added successfully');
+    }
+    resetForm();
+    await loadProducts();
+  } catch {
+    btn.disabled = false;
+  }
+  btn.disabled = false;
+});
+
+loadProducts();
+initReveal();
+</script>
+</body>
+</html>

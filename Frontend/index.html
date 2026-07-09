@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopVerse — Premium Online Shopping</title>
+<meta name="description" content="ShopVerse: Shop premium electronics, fashion and home essentials with fast delivery and secure checkout.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page-loader"><div class="loader-ring"></div></div>
+
+<div id="navbar-placeholder" data-active="home"></div>
+
+<!-- ===== Hero ===== -->
+<header class="hero">
+  <div class="hero-orb" style="width:340px;height:340px;top:-100px;right:-80px;"></div>
+  <div class="hero-orb" style="width:220px;height:220px;bottom:-60px;left:10%;"></div>
+  <div class="container">
+    <div class="row align-items-center gy-5">
+      <div class="col-lg-6 hero-content">
+        <span class="eyebrow" style="color:#fff"><span></span>Season Sale — Up to 40% Off</span>
+        <h1 class="hero-title" id="heroSlideTitle">Shop the future,<br>delivered today.</h1>
+        <p class="hero-sub" id="heroSlideSub">Curated electronics, fashion and home essentials — premium quality at prices that make sense.</p>
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="product-listing.html" class="btn btn-coral btn-lg">Shop Now <i class="bi bi-arrow-right ms-1"></i></a>
+          <a href="#categories" class="btn btn-light-soft btn-lg">Browse Categories</a>
+        </div>
+        <div class="hero-slide-dots" id="heroDots"></div>
+      </div>
+      <div class="col-lg-6 d-none d-lg-block">
+        <div class="position-relative" style="height:420px;">
+          <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500&q=80" class="hero-card-float rounded-4 position-absolute" style="width:260px;top:0;right:40px;" alt="Smartwatch">
+          <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80" class="hero-card-float rounded-4 position-absolute" style="width:230px;bottom:0;left:0;" alt="Headphones">
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== Categories ===== -->
+<section class="section" id="categories">
+  <div class="container">
+    <div class="text-center mx-auto mb-5" style="max-width:560px;">
+      <span class="eyebrow justify-content-center w-100">Browse</span>
+      <h2 class="section-title">Shop by Category</h2>
+      <p class="section-sub mx-auto">Find exactly what you need across our most-loved collections.</p>
+    </div>
+    <div class="row g-4" id="categoriesGrid"></div>
+  </div>
+</section>
+
+<!-- ===== Featured Products ===== -->
+<section class="section bg-lilac">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
+      <div>
+        <span class="eyebrow">Handpicked</span>
+        <h2 class="section-title mb-0">Featured Products</h2>
+      </div>
+      <a href="product-listing.html" class="btn btn-outline-violet">View All <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="row g-4" id="featuredGrid"></div>
+  </div>
+</section>
+
+<!-- ===== Bestsellers ===== -->
+<section class="section">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
+      <div>
+        <span class="eyebrow">Trending</span>
+        <h2 class="section-title mb-0">Best-Selling Products</h2>
+      </div>
+      <a href="product-listing.html" class="btn btn-outline-violet">View All <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="row g-4" id="bestsellerGrid"></div>
+  </div>
+</section>
+
+<!-- ===== Testimonials ===== -->
+<section class="section bg-lilac" id="testimonials">
+  <div class="container">
+    <div class="text-center mx-auto mb-5" style="max-width:560px;">
+      <span class="eyebrow justify-content-center w-100">Loved by Customers</span>
+      <h2 class="section-title">What Our Shoppers Say</h2>
+    </div>
+    <div class="row g-4" id="testimonialGrid"></div>
+  </div>
+</section>
+
+<!-- ===== Newsletter ===== -->
+<section class="section">
+  <div class="container">
+    <div class="newsletter-section text-center">
+      <div class="position-relative z-2 text-white">
+        <h2 class="text-white mb-2">Get 10% off your first order</h2>
+        <p class="mb-4" style="color:rgba(255,255,255,.85)">Subscribe to our newsletter for exclusive deals and new arrivals.</p>
+        <form class="d-flex justify-content-center gap-2 flex-wrap" id="newsletterForm" onsubmit="event.preventDefault(); showToast('Subscribed successfully! Check your inbox.'); this.reset();">
+          <input type="email" class="form-control" style="max-width:320px;" placeholder="Enter your email" required>
+          <button class="btn btn-coral" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="footer-placeholder"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="data/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/partials.js"></script>
+<script>
+  // Hero slides
+  const slides = [
+    { title: "Shop the future,<br>delivered today.", sub: "Curated electronics, fashion and home essentials — premium quality at prices that make sense." },
+    { title: "Big style.<br>Bigger savings.", sub: "Fresh fashion drops every week with up to 40% off on new arrivals." },
+    { title: "Smarter homes<br>start here.", sub: "Discover home essentials that blend comfort with modern design." }
+  ];
+  let slideIdx = 0;
+  const dotsWrap = document.getElementById('heroDots');
+  slides.forEach((_, i) => { const d = document.createElement('span'); if (i===0) d.classList.add('active'); d.onclick = () => setSlide(i); dotsWrap.appendChild(d); });
+  function setSlide(i){
+    slideIdx = i;
+    document.getElementById('heroSlideTitle').innerHTML = slides[i].title;
+    document.getElementById('heroSlideSub').textContent = slides[i].sub;
+    dotsWrap.querySelectorAll('span').forEach((d,idx) => d.classList.toggle('active', idx===i));
+  }
+  setInterval(() => setSlide((slideIdx+1) % slides.length), 4500);
+
+  // Load products from backend, derive categories, render featured/bestsellers
+  (async () => {
+    let products = [];
+    try {
+     const raw = await api.getProducts();
+     console.log(raw);
+console.log(products);
+
+     products = raw.map(normalizeProduct);
+    } catch { products = []; }
+
+    const categories = deriveCategories(products);
+    document.getElementById('categoriesGrid').innerHTML = categories.length ? categories.map(c => `
+      <div class="col-md-4 reveal">
+        <a href="product-listing.html?cat=${encodeURIComponent(c.name)}" class="cat-card d-block text-decoration-none">
+          <div class="cat-icon"><i class="bi ${c.icon}"></i></div>
+          <h5 class="mb-1">${c.name}</h5>
+          <p class="text-muted small mb-0">${c.count} Products</p>
+        </a>
+      </div>`).join('') : '<div class="col-12 text-center text-muted py-4">No categories yet.</div>';
+
+    document.getElementById('featuredGrid').innerHTML = products.length
+      ? products.slice(0, 4).map(productCardHtml).join('')
+      : '<div class="col-12 text-center text-muted py-4">No products available yet.</div>';
+
+    // "Bestsellers" = lowest stock (proxy for popularity) since there's no sales-count column
+    const bestsellers = [...products].sort((a,b) => a.qty - b.qty).slice(0, 4);
+    document.getElementById('bestsellerGrid').innerHTML = bestsellers.length
+      ? bestsellers.map(productCardHtml).join('')
+      : '<div class="col-12 text-center text-muted py-4">No products available yet.</div>';
+
+    initReveal();
+  })();
+
+  // Testimonials are static editorial content (no backend table for reviews)
+  const TESTIMONIALS = [
+    { name: "Aarav Mehta", role: "Verified Buyer", text: "The quality exceeded my expectations and delivery was lightning fast.", avatar: "https://i.pravatar.cc/100?img=12" },
+    { name: "Sneha Kapoor", role: "Verified Buyer", text: "Beautiful packaging, smooth checkout, and the product itself feels premium.", avatar: "https://i.pravatar.cc/100?img=47" },
+    { name: "Rohan Iyer", role: "Verified Buyer", text: "Customer support resolved my query within minutes. Shopping here feels effortless.", avatar: "https://i.pravatar.cc/100?img=33" },
+  ];
+  document.getElementById('testimonialGrid').innerHTML = TESTIMONIALS.map(t => `
+    <div class="col-md-4 reveal">
+      <div class="testi-card">
+        <div class="mb-2 text-warning"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+        <p class="text-muted">"${t.text}"</p>
+        <div class="d-flex align-items-center gap-2 mt-3">
+          <img src="${t.avatar}" class="testi-avatar" alt="${t.name}">
+          <div><strong class="d-block" style="color:var(--ink)">${t.name}</strong><small class="text-muted">${t.role}</small></div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  initReveal();
+</script>
+</body>
+</html>

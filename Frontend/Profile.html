@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile - ShopVerse</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+<!-- ===================== PAGE LOADER ===================== -->
+<!-- <div class="page-loader" id="pageLoader">
+  <div class="loader-ring"></div>
+</div> -->
+<div class="page-loader"><div class="loader-ring"></div></div>
+
+<div id="navbar-placeholder" data-active="home"></div>
+
+<!-- Navbar -->
+<div id="navbar"></div>
+
+<section class="section-sm">
+<div class="container">
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb-shop">
+    <a href="index.html">Home</a> &nbsp;/&nbsp; <span class="text-coral fw-semibold">My Profile</span>
+  </nav>
+
+  <p class="eyebrow">Account</p>
+  <h2 class="section-title mb-4">My Profile</h2>
+
+  <div class="row g-4">
+
+    <!-- LEFT PROFILE CARD -->
+    <div class="col-lg-4">
+      <div class="admin-card text-center">
+
+        <img src="https://ui-avatars.com/api/?name=Sahil+Barge&background=0B0B0C&color=C9A24B&size=180"
+             class="rounded-circle mx-auto mb-3 d-block"
+             style="border:3px solid var(--violet-light); object-fit:cover;"
+             width="120"
+             height="120"
+             id="userAvatar"
+             alt="User avatar">
+
+        <h4 class="section-title mb-1" style="font-size:1.3rem;" id="userName">-</h4>
+
+        <p class="stat-label mb-2">
+          <i class="bi bi-envelope me-1"></i>
+          <span id="userEmail">-</span>
+        </p>
+
+        <p class="mb-3">
+          <span class="badge-status badge-active" id="userRole">CUSTOMER</span>
+        </p>
+
+        <hr style="border-color:var(--border);">
+
+        <div class="text-start">
+
+          <p class="d-flex align-items-center mb-3">
+            <i class="bi bi-calendar-event me-2 text-coral fs-5"></i>
+            <span>
+              <span class="d-block stat-label mb-0">Member Since</span>
+              <span class="fw-semibold" id="joinedDate">-</span>
+            </span>
+          </p>
+
+          <p class="d-flex align-items-center mb-3">
+            <i class="bi bi-cart-check me-2 text-coral fs-5"></i>
+            <span>
+              <span class="d-block stat-label mb-0">Total Orders</span>
+              <span class="fw-semibold" id="totalOrders">0</span>
+            </span>
+          </p>
+
+          <p class="d-flex align-items-center mb-0">
+            <i class="bi bi-currency-rupee me-2 text-coral fs-5"></i>
+            <span>
+              <span class="d-block stat-label mb-0">Total Spend</span>
+              <span class="fw-semibold">₹<span id="totalSpend">0</span></span>
+            </span>
+          </p>
+
+        </div>
+
+        <button class="btn btn-primary w-100 mt-4" id="editProfileBtn">
+          <i class="bi bi-pencil-square me-2"></i>
+          Edit Profile
+        </button>
+
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="col-lg-8">
+
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h4 class="section-title mb-0" style="font-size:1.3rem;">
+          <i class="bi bi-box-seam me-2 text-coral"></i>
+          Recent Orders
+        </h4>
+        <a href="orders.html" class="btn btn-outline-violet btn-sm-pill">
+          View All <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+
+      <!-- Loading State -->
+      <div id="ordersLoading" class="text-center py-5">
+        <div class="loader-ring mx-auto"></div>
+        <p class="section-sub mx-auto mt-3 mb-0">Loading your recent orders...</p>
+      </div>
+
+      <!-- Orders Container -->
+      <div id="ordersContainer" class="d-none d-flex flex-column gap-3"></div>
+
+      <!-- Empty State -->
+      <div id="ordersEmpty" class="d-none text-center py-5">
+        <div class="cat-icon mx-auto mb-3" style="width:80px; height:80px; font-size:2rem;">
+          <i class="bi bi-bag"></i>
+        </div>
+        <p class="section-sub mx-auto mb-0">You haven't placed any orders yet.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+</section>
+
+<!-- Footer -->
+<div id="footer"></div>
+
+<!-- Toast -->
+<div class="toast-shop" id="toastShop">
+  <span class="ico"><i class="bi bi-check-lg"></i></span>
+  <span id="toastMessage">Done</span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../data/data.js"></script>
+<script src="../js/main.js"></script>
+<script src="./js/partials.js"></script>
+
+
+<script>
+
+  const pageLoader = document.getElementById('pageLoader');
+  const ordersLoading = document.getElementById('ordersLoading');
+  const ordersContainer = document.getElementById('ordersContainer');
+  const ordersEmpty = document.getElementById('ordersEmpty');
+  const toastShop = document.getElementById('toastShop');
+  const toastMessage = document.getElementById('toastMessage');
+  const editProfileBtn = document.getElementById('editProfileBtn');
+
+  function hidePageLoader() {
+    pageLoader.classList.add('hide');
+  }
+
+  function showToast(message) {
+    toastMessage.textContent = message;
+    toastShop.classList.add('show');
+    setTimeout(() => toastShop.classList.remove('show'), 2800);
+  }
+
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function formatCurrency(amount) {
+    const num = Number(amount) || 0;
+    return num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function getStatusBadgeClass(status) {
+    const s = (status || '').toString().toLowerCase();
+    switch (s) {
+      case 'delivered':
+        return 'badge-delivered';
+      case 'shipped':
+        return 'badge-shipped';
+      case 'processing':
+      case 'pending':
+        return 'badge-processing';
+      case 'cancelled':
+      case 'canceled':
+        return 'badge-blocked';
+      case 'returned':
+        return 'badge-pending';
+      default:
+        return 'badge-processing';
+    }
+  }
+
+  function renderOrderCard(order) {
+    const status = order.status || 'Processing';
+    const date = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A';
+
+    const wrap = document.createElement('div');
+    wrap.className = 'admin-card';
+
+    wrap.innerHTML = `
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+        <div>
+          <h5 class="mb-1" style="color:var(--ink); font-weight:700;">Order #${escapeHtml(order.id)}</h5>
+          <p class="stat-label mb-2">${escapeHtml(date)}</p>
+          <p class="fw-bold mb-0" style="color:var(--ink); font-size:1.05rem;">₹${formatCurrency(order.totalAmount)}</p>
+        </div>
+        <span class="badge-status ${getStatusBadgeClass(status)}">${escapeHtml(status)}</span>
+      </div>
+      <hr style="border-color:var(--border); margin:1.2rem 0;">
+      <a href="order-details.html?id=${encodeURIComponent(order.id)}" class="btn btn-outline-violet btn-sm-pill">
+        <i class="bi bi-eye me-1"></i> View Details
+      </a>
+    `;
+
+    return wrap;
+  }
+
+  async function loadProfile() {
+    try {
+      const user = await api.me();
+
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('userEmail').textContent = user.email;
+      document.getElementById('userRole').textContent = (user.role || 'CUSTOMER').toString().toUpperCase();
+      document.getElementById('userAvatar').src =
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=0B0B0C&color=C9A24B&size=180`;
+
+      if (user.createdAt) {
+        document.getElementById('joinedDate').textContent = new Date(user.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+      } else {
+        document.getElementById('joinedDate').textContent = 'N/A';
+      }
+
+      const orders = await api.getMyOrders();
+
+      document.getElementById('totalOrders').textContent = orders.length;
+
+      ordersLoading.classList.add('d-none');
+
+      if (!orders || orders.length === 0) {
+        ordersEmpty.classList.remove('d-none');
+        document.getElementById('totalSpend').textContent = '0.00';
+        return;
+      }
+
+      let totalSpend = 0;
+      ordersContainer.innerHTML = '';
+
+      orders.slice(0, 5).forEach(order => {
+        totalSpend += Number(order.totalAmount) || 0;
+        ordersContainer.appendChild(renderOrderCard(order));
+      });
+
+      document.getElementById('totalSpend').textContent = formatCurrency(totalSpend);
+      ordersContainer.classList.remove('d-none');
+
+    } catch (e) {
+      console.error(e);
+      window.location.href = 'login.html';
+    } finally {
+      hidePageLoader();
+    }
+  }
+
+  editProfileBtn.addEventListener('click', () => {
+    window.location.href = 'edit-profile.html';
+  });
+
+  document.addEventListener('DOMContentLoaded', loadProfile);
+
+  window.addEventListener('load', () => {
+    setTimeout(hidePageLoader, 300);
+  });
+
+</script>
+
+</body>
+
+</html>
