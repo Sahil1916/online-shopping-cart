@@ -275,5 +275,131 @@ public class EmailService {
         		"</html>";
     
         sendHtmlMail(customerEmail, subject, html);
+        
     }
+    
+    public void sendOrderConfirmedMail(
+            String customerName,
+            String customerEmail,
+            Long orderId) {
+
+        String subject="Order Confirmed - ShopVerse";
+
+        String html=
+
+        "<html><body style='font-family:Arial;background:#f5f5f5;padding:30px;'>"
+
+        +"<div style='background:white;padding:30px;border-radius:12px;'>"
+
+        +"<h2 style='color:green;'>✅ Order Confirmed</h2>"
+
+        +"<p>Hello "+customerName+",</p>"
+
+        +"<p>Your Order <b>#"+orderId+"</b> has been confirmed.</p>"
+
+        +"<p>Our warehouse has started preparing your order.</p>"
+
+        +"<br>"
+
+        +"<b>Status :</b> Confirmed"
+
+        +"</div></body></html>";
+
+        sendHtmlMail(customerEmail,subject,html);
+
+    }
+    
+    public void sendOrderShippedMail(
+            String customerName,
+            String customerEmail,
+            Long orderId) {
+
+        String subject="Your Order has been Shipped";
+
+        String html=
+
+        "<html><body style='font-family:Arial;background:#f5f5f5;padding:30px;'>"
+
+        +"<div style='background:white;padding:30px;border-radius:12px;'>"
+
+        +"<h2 style='color:#2196F3;'>🚚 Order Shipped</h2>"
+
+        +"<p>Hello "+customerName+",</p>"
+
+        +"<p>Your Order <b>#"+orderId+"</b> is now on the way.</p>"
+
+        +"<p>Estimated Delivery : <b>2-5 Days</b></p>"
+
+        +"<br>"
+
+        +"<b>Status :</b> Shipped"
+
+        +"</div></body></html>";
+
+        sendHtmlMail(customerEmail,subject,html);
+
+    }
+    
+    public void sendOutForDeliveryMail(
+            String customerName,
+            String customerEmail,
+            Long orderId) {
+
+        String subject="Out For Delivery";
+
+        String html=
+
+        "<html><body style='font-family:Arial;background:#f5f5f5;padding:30px;'>"
+
+        +"<div style='background:white;padding:30px;border-radius:12px;'>"
+
+        +"<h2 style='color:#FF9800;'>📍 Out For Delivery</h2>"
+
+        +"<p>Hello "+customerName+",</p>"
+
+        +"<p>Your order <b>#"+orderId+"</b> is out for delivery.</p>"
+
+        +"<p>Please keep your phone available.</p>"
+
+        +"<br>"
+
+        +"<b>Status :</b> Out For Delivery"
+
+        +"</div></body></html>";
+
+        sendHtmlMail(customerEmail,subject,html);
+
+    }
+    
+    public void sendDeliveredMail(
+            String customerName,
+            String customerEmail,
+            Long orderId) {
+
+        String subject="Order Delivered";
+
+        String html=
+
+        "<html><body style='font-family:Arial;background:#f5f5f5;padding:30px;'>"
+
+        +"<div style='background:white;padding:30px;border-radius:12px;'>"
+
+        +"<h2 style='color:#4CAF50;'>🎉 Order Delivered</h2>"
+
+        +"<p>Hello "+customerName+",</p>"
+
+        +"<p>Your Order <b>#"+orderId+"</b> has been delivered successfully.</p>"
+
+        +"<p>We hope you enjoy your purchase.</p>"
+
+        +"<p>Please don't forget to rate your experience ⭐⭐⭐⭐⭐</p>"
+
+        +"</div></body></html>";
+
+        sendHtmlMail(customerEmail,subject,html);
+
+    }
+    
+    
+    
 }

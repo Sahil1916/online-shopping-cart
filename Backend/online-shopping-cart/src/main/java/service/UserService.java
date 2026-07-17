@@ -32,21 +32,28 @@ public class UserService {
 
 	public User login(String email, String password) {
 
-		User user = userdao.login(email);
+	    User user = userdao.login(email);
 
-		if (user == null)
-			return null;
+	    System.out.println("Email entered : " + email);
 
-		
-		boolean isValid = PasswordUtil.checkPassword(password, user.getPassword());
+	    if (user == null) {
+	        System.out.println("User not found");
+	        return null;
+	    }
 
-		if (!isValid)
-			return null;
-		// client la hashpassword patahvu naye mhanun
-		user.setPassword(null);
+	    System.out.println("Hash from DB : " + user.getPassword());
 
-		return user;
+	    boolean isValid = PasswordUtil.checkPassword(password, user.getPassword());
 
+	    System.out.println("Password entered : " + password);
+	    System.out.println("Password Valid : " + isValid);
+
+	    if (!isValid)
+	        return null;
+
+	    user.setPassword(null);
+
+	    return user;
 	}
 
 	public java.util.List<User> listAllUsers() {

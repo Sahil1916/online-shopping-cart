@@ -35,7 +35,7 @@ function renderAdminTopbar(title, subtitle = ''){
     <div class="d-flex align-items-center gap-3">
       <button class="icon-btn"><i class="bi bi-bell"></i></button>
       <div class="d-flex align-items-center gap-2">
-        <img src="https://i.pravatar.cc/100?img=8" style="width:42px;height:42px;border-radius:50%;object-fit:cover;" alt="admin">
+       
         <div class="d-none d-md-block">
           <div class="fw-semibold small" id="adminNameSlot">Admin</div>
           <div class="text-muted small" style="font-size:.75rem;">Administrator</div>

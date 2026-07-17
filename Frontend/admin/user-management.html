@@ -65,7 +65,7 @@ function renderUsers(){
   document.getElementById('userTableBody').innerHTML = list.length ? list.map(u => `
     <tr>
       <td><div class="d-flex align-items-center gap-2">
-        <img src="https://i.pravatar.cc/100?u=${u.id}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+        <u=${u.id}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
         <span class="fw-semibold small">${u.name}</span>
       </div></td>
       <td class="small">${u.email}</td>
