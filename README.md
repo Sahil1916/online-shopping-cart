@@ -209,7 +209,7 @@ public class EmailConfig {
 
 ![login](screenshots/login.png)
 ![register](screenshots/register.png)
-![admin login](screenshots/admin login.png)
+![admin login](screenshots/admin-login.png)
 
 
 ## Product Listing
@@ -224,23 +224,23 @@ public class EmailConfig {
 
 ## Checkout
 
-![Checkout](screenshots/Check Out.png)
+![Checkout](screenshots/Check-Out.png)
 ---
 
 ## Orders
 
-![Orders](screenshots/order done.png)
+![Orders](screenshots/order-done.png)
 ---
 
 ## Admin Dashboard
 
-![Admin_Dashboard](screenshots/Admin dashboard.png)
-![Admin_Dashboard](screenshots/Product curd.png)
-![Admin_Dashboard](screenshots/all orders.png)
+![Admin_Dashboard](screenshots/Admin-dashboard.png)
+![Admin_Dashboard](screenshots/Product-curd.png)
+![Admin_Dashboard](screenshots/all-orders.png)
 
-# user Mails
+## user Mails
 ![mails](screenshots/mail.png)
-
+---
 
 
 ---
