@@ -1,5 +1,5 @@
 /* ============================================================
-   ShopVerse — Core JS (shared across all pages)
+   Shop_With_Sahil — Core JS (shared across all pages)
    Cart is backend-backed (session-based). Wishlist stays client-side
    (localStorage) since the backend has no wishlist table/endpoint.
    ============================================================ */
@@ -38,7 +38,7 @@ const Cart = {
 
 /* ---------- Wishlist (client-only — no backend support) ---------- */
 const Wishlist = {
-  KEY: 'shopverse_wishlist',
+  KEY: 'shop_with_sahil_wishlist',
   get(){ return JSON.parse(localStorage.getItem(this.KEY) || '[]'); },
   save(items){ localStorage.setItem(this.KEY, JSON.stringify(items)); this.updateBadge(); },
   has(id){ return this.get().some(i => i.id === id); },

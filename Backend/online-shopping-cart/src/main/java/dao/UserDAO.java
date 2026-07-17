@@ -37,8 +37,7 @@ public class UserDAO {
 	}
 
 	public User findByEmail(String email) {
-		 System.out.println("Searching Email = " + email);
-
+		
 		String sql = "SELECT * FROM users WHERE email = ?";
 
 		try (Connection con = DBconnection.getConnection();
@@ -60,8 +59,7 @@ public class UserDAO {
 				user.setRole(UserRole.valueOf(rs.getString("role")));
 				user.setCreatedAt(rs.getTimestamp("created_at"));
 				
-				 System.out.println("USER FOUND");
-
+	
 				return user;
 			}
 
@@ -70,7 +68,6 @@ public class UserDAO {
 			throw new RuntimeException(e);
 		}
 
-		 System.out.println("USER NOT FOUND");
 		return null;
 
 	}
@@ -123,5 +120,37 @@ public class UserDAO {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public User findById(Long id) {
+
+	    String sql = "SELECT * FROM users WHERE id = ?";
+
+	    try (
+	        Connection con = DBconnection.getConnection();
+	        PreparedStatement ps = con.prepareStatement(sql)
+	    ) {
+
+	        ps.setLong(1, id);
+
+	        ResultSet rs = ps.executeQuery();
+
+	        if (rs.next()) {
+
+	            User user = new User();
+
+	            user.setId(rs.getLong("id"));
+	            user.setName(rs.getString("name"));
+	            user.setEmail(rs.getString("email"));
+	            user.setRole(UserRole.valueOf(rs.getString("role")));
+
+	            return user;
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return null;
 	}
 }

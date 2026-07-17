@@ -2,6 +2,8 @@ package model;
 
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import enums.UserRole;
 
 import java.sql.Timestamp;
@@ -53,6 +55,7 @@ public class User {
         this.email = email;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }

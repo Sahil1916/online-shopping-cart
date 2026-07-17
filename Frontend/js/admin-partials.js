@@ -1,12 +1,12 @@
 /* ============================================================
-   ShopVerse Admin — Sidebar & Topbar partials
+   Shop_With_Sahil Admin — Sidebar & Topbar partials
    ============================================================ */
 
 function renderAdminSidebar(active = ''){
   const link = (href, icon, label, key) => `<a href="${href}" class="${active===key?'active':''}"><i class="bi ${icon}"></i> ${label}</a>`;
   return `
   <aside class="admin-sidebar" id="adminSidebar">
-    <a href="../index.html" class="brand-logo text-white mb-4 d-flex"><i class="bi bi-bag-check-fill text-coral"></i> Shop<span class="dot">Verse</span></a>
+    <a href="../index.html" class="brand-logo text-white mb-4 d-flex"><i class="bi bi-bag-check-fill text-coral"></i> Shop_With_Sahil</a>
     <p class="text-uppercase small opacity-50 mb-2" style="font-size:.72rem; letter-spacing:.08em;">Main</p>
     ${link('dashboard.html','bi-grid-1x2-fill','Dashboard','dash')}
     ${link('product-management.html','bi-box-seam-fill','Products','products')}

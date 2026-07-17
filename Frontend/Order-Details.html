@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Order Details | ShopVerse</title>
+    <title>Order Details | ShopWith_Sahil</title>
 
     <!-- Bootstrap 5 -->
     <link
@@ -15,7 +15,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
     />
-    <!-- Global Stylesheet (ShopVerse design tokens) -->
+    <!-- Global Stylesheet (ShopWith_Sahil design tokens) -->
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
@@ -33,7 +33,7 @@
         <!-- Breadcrumb -->
         <nav class="breadcrumb-shop">
           <a href="index.html">Home</a> &nbsp;/&nbsp;
-          <a href="orders.html">My Orders</a> &nbsp;/&nbsp;
+          <a href="Orders.html">My Orders</a> &nbsp;/&nbsp;
           <span class="text-coral fw-semibold">Order Details</span>
         </nav>
 
@@ -78,7 +78,7 @@
             <button class="btn btn-primary" id="retryBtn">
               <i class="bi bi-arrow-clockwise me-1"></i> Retry
             </button>
-            <a href="orders.html" class="btn btn-light-soft">Back to Orders</a>
+            <a href="Orders.html" class="btn btn-light-soft">Back to Orders</a>
           </div>
         </div>
 
@@ -96,7 +96,7 @@
           <p class="section-sub mx-auto mb-4">
             We couldn't find the order you're looking for.
           </p>
-          <a href="orders.html" class="btn btn-primary btn-lg">
+          <a href="Orders.html" class="btn btn-primary btn-lg">
             <i class="bi bi-arrow-left me-1"></i> Back to Orders
           </a>
         </div>
@@ -194,7 +194,7 @@
           </div>
 
           <div class="d-flex flex-wrap gap-2 justify-content-between">
-            <a href="orders.html" class="btn btn-light-soft">
+            <a href="Orders.html" class="btn btn-light-soft">
               <i class="bi bi-arrow-left me-1"></i> Back to Orders
             </a>
             <button id="downloadInvoiceBtnBottom" class="btn btn-primary">
@@ -219,6 +219,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- API Client -->
     <script src="./data/data.js"></script>
+  <script src="./js/main.js"></script>
+  <script src="./js/partials.js"></script>
 
     <script>
       const pageLoader = document.getElementById("pageLoader");
@@ -442,7 +444,6 @@
 
         const response = await api.getOrderDetails(orderId);
 
-        console.log("API Response:", response);
 
         if (!response || !response.order) {
             showOnly(emptyState);
@@ -457,8 +458,6 @@
 
         currentOrder = order;
 
-        console.log("Current Order:", currentOrder);
-        console.log("Order ID:", currentOrder.id);
 
         renderOrder(currentOrder);
 
@@ -483,7 +482,7 @@
 
     if (!currentOrder) return;
 
-    window.location.href = `invoice.html?id=${currentOrder.id}`;
+    window.location.href = `Invoice.html?id=${currentOrder.id}`;
 
 }
 

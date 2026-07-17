@@ -20,6 +20,10 @@ public class UserService {
 		String hashedPassword = PasswordUtil.hashPassword(user.getPassword());
 		user.setPassword(hashedPassword);
 
+		// Public registration must never trust a client-supplied role
+		// (prevents self-registering as ADMIN, and avoids a crash if role is omitted)
+		user.setRole(enums.UserRole.CUSTOMER);
+
 		// return the user for register
 
 		return userdao.register(user);
@@ -33,6 +37,7 @@ public class UserService {
 		if (user == null)
 			return null;
 
+		
 		boolean isValid = PasswordUtil.checkPassword(password, user.getPassword());
 
 		if (!isValid)
@@ -52,4 +57,7 @@ public class UserService {
 		return userdao.updateStatus(id, status);
 	}
 
+	public User getUserById(Long id) {
+	    return userdao.findById(id);
+	}
 }

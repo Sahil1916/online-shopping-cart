@@ -132,6 +132,25 @@ public class CartDAO {
 	            throw new RuntimeException(e);
 	        }
 	    }
+
+	 public boolean deleteByCartIdAndUserId(Long cartId, Long userId) {
+
+	        String sql = "DELETE FROM cart WHERE id=? AND user_id=?";
+
+	        try (
+	                Connection con = DBconnection.getConnection();
+	                PreparedStatement ps = con.prepareStatement(sql)
+	        ) {
+
+	            ps.setLong(1, cartId);
+	            ps.setLong(2, userId);
+
+	            return ps.executeUpdate() > 0;
+
+	        } catch (SQLException e) {
+	            throw new RuntimeException(e);
+	        }
+	    }
 	 
 	 
 	 public Cart findByCartIdAndUserId(Long cartId, Long userId) {

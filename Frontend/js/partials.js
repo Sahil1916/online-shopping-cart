@@ -1,5 +1,5 @@
 /* ============================================================
-   ShopVerse — Reusable Navbar & Footer partials
+   Shop_With_Sahil — Reusable Navbar & Footer partials
    ============================================================ */
 
 function renderNavbar(active = ''){
@@ -7,7 +7,7 @@ function renderNavbar(active = ''){
   return `
   <nav class="navbar navbar-shop navbar-expand-lg">
     <div class="container">
-      <a class="brand-logo" href="index.html"><i class="bi bi-bag-check-fill text-violet"></i> Shop<span class="dot">Verse</span></a>
+      <a class="brand-logo" href="index.html"><i class="bi bi-bag-check-fill text-violet"></i> Shop_With_Sahil</a>
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
         <i class="bi bi-list fs-2"></i>
       </button>
@@ -52,8 +52,8 @@ function renderFooter(){
     <div class="container">
       <div class="row g-4">
         <div class="col-lg-4">
-          <a class="brand-logo text-white mb-3 d-inline-flex" href="index.html"><i class="bi bi-bag-check-fill text-coral"></i> Shop<span class="dot">Verse</span></a>
-          <p class="small mb-3">Premium products, honest prices, and delivery you can trust. ShopVerse brings the best of electronics, fashion and home to your doorstep.</p>
+          <a class="brand-logo text-white mb-3 d-inline-flex" href="index.html"><i class="bi bi-bag-check-fill text-coral"></i> Shop_With_Sahil</a>
+          <p class="small mb-3">Premium products, honest prices, and delivery you can trust. Shop_With_Sahil brings the best of electronics, fashion and home to your doorstep.</p>
           <div class="footer-social">
             <a href="#"><i class="bi bi-facebook"></i></a>
             <a href="#"><i class="bi bi-instagram"></i></a>
@@ -74,13 +74,13 @@ function renderFooter(){
           <a href="register.html">Register</a>
           <a href="cart.html">My Cart</a>
           <a href="wishlist.html">My Wishlist</a>
-          <a href="order-confirmation.html">My Orders</a>
+          <a href="Orders.html">My Orders</a>
         </div>
         <div class="col-lg-2 col-6">
           <h6>Company</h6>
           <a href="#">About Us</a>
           <a href="#">Careers</a>
-          <a href="admin-login.html">Admin Login</a>
+          <a href="admin/admin-login.html">Admin Login</a>
           <a href="#">Contact</a>
         </div>
         <div class="col-lg-2 col-6">
@@ -93,7 +93,7 @@ function renderFooter(){
       </div>
       <hr class="border-light opacity-10 mt-4">
       <div class="d-flex flex-column flex-md-row justify-content-between align-items-center small pt-2 gap-2">
-        <span>© 2026 ShopVerse. All rights reserved. Built for MCA Advanced Java Project.</span>
+        <span>© 2026 Shop_With_Sahil. All rights reserved. Built for MCA Advanced Java Project.</span>
         <span class="d-flex gap-3"><i class="bi bi-credit-card-2-front"></i> <i class="bi bi-paypal"></i> <i class="bi bi-wallet2"></i> <i class="bi bi-google-pay"></i></span>
       </div>
     </div>

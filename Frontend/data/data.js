@@ -1,5 +1,5 @@
 /* ============================================================
-   ShopVerse — API Client (matches online-shopping-cart backend exactly)
+   Shop_With_Sahil — API Client (matches online-shopping-cart backend exactly)
    Base URL points at Eclipse/Tomcat; frontend is served separately
    via VS Code Live Server, so every call needs credentials:'include'.
    ============================================================ */

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Profile - ShopVerse</title>
+<title>My Profile - ShopWith_Sahil</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -105,7 +105,7 @@
           <i class="bi bi-box-seam me-2 text-coral"></i>
           Recent Orders
         </h4>
-        <a href="orders.html" class="btn btn-outline-violet btn-sm-pill">
+        <a href="Orders.html" class="btn btn-outline-violet btn-sm-pill">
           View All <i class="bi bi-arrow-right ms-1"></i>
         </a>
       </div>
@@ -144,8 +144,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../data/data.js"></script>
-<script src="../js/main.js"></script>
+<script src="data/data.js"></script>
+<script src="js/main.js"></script>
 <script src="./js/partials.js"></script>
 
 
@@ -221,7 +221,7 @@
         <span class="badge-status ${getStatusBadgeClass(status)}">${escapeHtml(status)}</span>
       </div>
       <hr style="border-color:var(--border); margin:1.2rem 0;">
-      <a href="order-details.html?id=${encodeURIComponent(order.id)}" class="btn btn-outline-violet btn-sm-pill">
+      <a href="Order-Details.html?id=${encodeURIComponent(order.id)}" class="btn btn-outline-violet btn-sm-pill">
         <i class="bi bi-eye me-1"></i> View Details
       </a>
     `;

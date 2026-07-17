@@ -25,9 +25,7 @@ public class AuthenticationFilter implements Filter {
         String uri = req.getRequestURI();
         String method = req.getMethod();
 
-        System.out.println("--------------------------------");
-        System.out.println(method + " " + uri);
-
+                
         // OPTIONS
         if ("OPTIONS".equalsIgnoreCase(method)) {
             chain.doFilter(request, response);
@@ -82,9 +80,7 @@ public class AuthenticationFilter implements Filter {
             return;
         }
 
-        System.out.println("SESSION = " + session.getId());
-        System.out.println("USER = " + session.getAttribute("userId"));
-
+                
         chain.doFilter(request, response);
     }
 }

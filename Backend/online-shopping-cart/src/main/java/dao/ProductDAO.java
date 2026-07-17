@@ -108,6 +108,28 @@ public class ProductDAO {
         }
     }
 
+    // Atomically decrements stock only if enough quantity is available.
+    // Returns false if there isn't enough stock (prevents overselling under concurrent orders).
+    public boolean decrementStock(Long productId, int qty) {
+
+        String sql = "UPDATE products SET quantity = quantity - ? WHERE id = ? AND quantity >= ?";
+
+        try (
+                Connection con = DBconnection.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)
+        ) {
+
+            ps.setInt(1, qty);
+            ps.setLong(2, productId);
+            ps.setInt(3, qty);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public boolean delete(Long id) {
 
         String sql = "DELETE FROM products WHERE id=?";
@@ -140,43 +162,11 @@ public class ProductDAO {
         product.setQuantity(rs.getInt("quantity"));
         product.setImageUrl(rs.getString("image_url"));
 
-        return product;
-    }
-    
-    public Product getProductById(Long productId) {
-
-        String sql = "SELECT * FROM products WHERE id = ?";
-
-        try (
-                Connection con = DBconnection.getConnection();
-                PreparedStatement ps = con.prepareStatement(sql);
-        ) {
-
-            ps.setLong(1, productId);
-
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-
-                Product product = new Product();
-
-                product.setId(rs.getLong("id"));
-                product.setName(rs.getString("name"));
-                product.setDescription(rs.getString("description"));
-                product.setPrice(rs.getBigDecimal("price"));
-                product.setMrp(rs.getBigDecimal("mrp"));
-                product.setCategory(rs.getString("category"));
-                product.setImageUrl(rs.getString("image_url"));
-                product.setQuantity(rs.getInt("quantity"));
-                product.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-
-                return product;
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        Timestamp createdAt = rs.getTimestamp("created_at");
+        if (createdAt != null) {
+            product.setCreatedAt(createdAt.toLocalDateTime());
         }
 
-        return null;
+        return product;
     }
 }

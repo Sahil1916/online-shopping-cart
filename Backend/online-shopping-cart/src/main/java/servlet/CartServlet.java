@@ -39,8 +39,7 @@ public class CartServlet extends HttpServlet {
         }
 
         Long userId = (Long) session.getAttribute("userId");
-        System.out.println("UserId = " + userId);
-
+        
         // Session मधला userId Cart मध्ये set कर
         cart.setUserId(userId);
 
@@ -73,8 +72,7 @@ public class CartServlet extends HttpServlet {
         }
         
         Long userId = (Long) session.getAttribute("userId");
-        System.out.println("UserId = " + userId);
-
+        
         // Session मधला userId Cart मध्ये set कर
 
         // Business Logic
@@ -98,8 +96,18 @@ public class CartServlet extends HttpServlet {
             return;
         }
 
+        HttpSession session = req.getSession(false);
+
+        if (session == null) {
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            objectMapper.writeValue(resp.getWriter(), "Please login first");
+            return;
+        }
+
+        Long userId = (Long) session.getAttribute("userId");
+
         boolean deleted =
-        		cartService.deleteCart(Long.parseLong(id));
+        		cartService.deleteCartItem(Long.parseLong(id), userId);
 
         resp.setContentType("application/json");
 

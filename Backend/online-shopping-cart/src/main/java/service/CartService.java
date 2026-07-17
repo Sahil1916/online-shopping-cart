@@ -31,9 +31,9 @@ public class CartService {
 		return cartdao.getcartByUserId(UserId);
 	}
 	
-	public boolean deleteCart(Long userId) {
-		
-		return cartdao.delete(userId);
+	public boolean deleteCartItem(Long cartId, Long userId) {
+
+		return cartdao.deleteByCartIdAndUserId(cartId, userId);
 	}
 	
 	public boolean upadateQuantity(Long cartId,int quantity) {

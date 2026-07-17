@@ -12,9 +12,12 @@ import model.Cart;
 import model.Order;
 import model.OrderItem;
 import model.Product;
+import model.User;
 
 public class OrderService {
-
+	
+	private UserService userService = new UserService();
+	private EmailService emailService = new EmailService();
     private CartDAO cartDAO = new CartDAO();
     private ProductDAO productDAO = new ProductDAO();
     private OrderDAO orderDAO = new OrderDAO();
@@ -29,12 +32,17 @@ public class OrderService {
             return false;
         }
 
-        // 2. Calculate total amount
+        // 2. Calculate total amount (also validates product still exists & has stock)
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (Cart cart : cartItems) {
 
-            Product product = productDAO.getProductById(cart.getProductId());
+            Product product = productDAO.findById(cart.getProductId());
+
+            if (product == null || product.getQuantity() < cart.getQuantity()) {
+                // Product was removed or there isn't enough stock left
+                return false;
+            }
 
             BigDecimal itemTotal =
                     product.getPrice().multiply(BigDecimal.valueOf(cart.getQuantity()));
@@ -60,7 +68,7 @@ public class OrderService {
         // 5. Save Order Items
         for (Cart cart : cartItems) {
 
-            Product product = productDAO.getProductById(cart.getProductId());
+            Product product = productDAO.findById(cart.getProductId());
 
             OrderItem item = new OrderItem();
 
@@ -70,10 +78,33 @@ public class OrderService {
             item.setPrice(product.getPrice());
 
             orderItemDAO.saveOrderItem(item);
+
+            productDAO.decrementStock(cart.getProductId(), cart.getQuantity());
         }
 
-        // 6. Clear Cart
+     // 6. Clear Cart
         cartDAO.clearCart(userId);
+
+        // 7. Send Order Confirmation Email
+        try {
+
+            User user = userService.getUserById(userId);
+
+            if (user != null) {
+
+                emailService.sendOrderPlacedMail(
+                        user.getName(),
+                        user.getEmail(),
+                        orderId,
+                        totalAmount.doubleValue());
+
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
 
         return true;
     }
@@ -85,6 +116,8 @@ public class OrderService {
     public Order getOrderById(Long orderId) {
         return orderDAO.getOrderById(orderId);
     }
+    
+    
 
     public List<OrderItem> getOrderItemsByOrderId(Long orderId) {
         return orderItemDAO.getOrderItemsByOrderId(orderId);

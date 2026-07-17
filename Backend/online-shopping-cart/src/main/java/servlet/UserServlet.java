@@ -100,77 +100,37 @@ public class UserServlet extends HttpServlet {
 
     private void login(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        System.out.println("========== LOGIN START ==========");
-
         try {
 
-            System.out.println("STEP 1 : Reading Request");
-
             User requestUser = objectMapper.readValue(req.getReader(), User.class);
-
-            System.out.println("STEP 2 : Request Read");
-            System.out.println("Email = " + requestUser.getEmail());
-
-            System.out.println("STEP 3 : Calling Service");
 
             User user = userService.login(
                     requestUser.getEmail(),
                     requestUser.getPassword());
 
-            System.out.println("STEP 4 : Service Returned");
-            System.out.println("User = " + user);
-
             if (user == null) {
-                System.out.println("STEP 5 : USER IS NULL");
-
                 resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 objectMapper.writeValue(resp.getWriter(), "Invalid Email or Password");
-
-                System.out.println("========== LOGIN END ==========");
                 return;
             }
 
-            System.out.println("STEP 6 : Creating Session");
-
             HttpSession session = req.getSession(true);
-
-            System.out.println("STEP 7 : Session Created");
-            System.out.println("Session ID = " + session.getId());
 
             session.setAttribute("userId", user.getId());
             session.setAttribute("name", user.getName());
             session.setAttribute("role", user.getRole().name());
 
-            System.out.println("STEP 8 : Session Attributes Set");
-
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.setContentType("application/json");
             resp.setCharacterEncoding("UTF-8");
 
-            System.out.println("STEP 9 : Converting User To JSON");
-
-            String json = objectMapper.writeValueAsString(user);
-
-            System.out.println("JSON = " + json);
-
-            System.out.println("STEP 10 : Writing Response");
-
-            resp.getWriter().write(json);
-
-            System.out.println("STEP 11 : Flushing");
-
-            resp.getWriter().flush();
-
-            System.out.println("STEP 12 : Response Sent Successfully");
+            objectMapper.writeValue(resp.getWriter(), user);
 
         } catch (Exception e) {
 
-            System.out.println("######## LOGIN EXCEPTION ########");
-            e.printStackTrace();
-
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            objectMapper.writeValue(resp.getWriter(), "Login failed. Please try again.");
         }
-
-        System.out.println("========== LOGIN END ==========");
     }
     // ---------------- Current User ----------------
 
